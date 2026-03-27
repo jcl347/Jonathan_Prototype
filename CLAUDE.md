@@ -27,6 +27,8 @@ This repository contains a fraud detection system for ABA (Applied Behavior Anal
 4. **Static export for Vercel**: Set `output: "export"` in `next.config.ts` and `images: { unoptimized: true }` for static deployment.
    - `rootDirectory` is a **Vercel dashboard setting only** - it is NOT valid in `vercel.json` and will cause schema validation failure.
    - For monorepo setups, use `cd website &&` prefix in `buildCommand` and `installCommand` instead.
+   - When using `framework: "nextjs"`, Vercel expects `.next/routes-manifest.json` - do NOT use `output: "export"` with static `out/` directory. Remove `output: "export"` from next.config.ts and set `outputDirectory` to `website/.next`.
+   - Root `package.json` must list `next` in dependencies for Vercel framework detection, even if the actual app is in a subdirectory.
 5. **create-next-app interactive mode**: The CLI prompts cannot be answered in non-interactive environments. Initialize manually with `npm init` + install dependencies.
 
 ### Fraud Pattern Learnings (from HHS-OIG audits)
