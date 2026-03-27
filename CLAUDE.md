@@ -25,6 +25,8 @@ This repository contains a fraud detection system for ABA (Applied Behavior Anal
 2. **Recharts TypeScript**: The `formatter` prop on `Tooltip` requires handling `ValueType | undefined`, not just `number`. Use `(v) => Number(v).toFixed(4)` pattern.
 3. **NumPy JSON serialization**: `json.dump()` cannot serialize numpy float32/int64 types. Use a custom `NumpyEncoder` class that converts numpy types to Python natives.
 4. **Static export for Vercel**: Set `output: "export"` in `next.config.ts` and `images: { unoptimized: true }` for static deployment.
+   - `rootDirectory` is a **Vercel dashboard setting only** - it is NOT valid in `vercel.json` and will cause schema validation failure.
+   - For monorepo setups, use `cd website &&` prefix in `buildCommand` and `installCommand` instead.
 5. **create-next-app interactive mode**: The CLI prompts cannot be answered in non-interactive environments. Initialize manually with `npm init` + install dependencies.
 
 ### Fraud Pattern Learnings (from HHS-OIG audits)
