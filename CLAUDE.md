@@ -58,8 +58,28 @@ cd website && npm install && npm run dev
 - Python: pandas, numpy, scikit-learn, xgboost, networkx, matplotlib, seaborn
 - Node.js: next, react, recharts, tailwindcss, typescript
 
-## Important Notes
+## Real-World ABA Fraud Cases (Reference for Pattern Validation)
+1. **Smart Therapy LLC (MN)**: $14M+ Medicaid fraud. Billed max authorized EIDBI hours for services not rendered. Paid kickbacks ($1,000+/child) to Somali families. EIDBI providers grew 700% (41 to 300+) in 5 years in MN.
+2. **Minds Cornerstone (CT)**: $1.88M. Operator ran company under pseudonym while incarcerated. Billed ABA supervision without technician services.
+3. **Lamour by Design (MA)**: $1M+. Sole LABA was part-time and denied performing billed services. Staff instructed to bill "based on historical data."
+4. **National Medicaid ABA spending**: $660M (2019) to $2.2B (2023). Indiana alone: $14.4M (2017) to $611M (2023).
+
+## Key ABA CPT Codes Reference
+| Code | Description | Typical Biller | Our Rate/Unit |
+|------|-------------|---------------|---------------|
+| 97151 | Behavior identification assessment | BCBA | $50 |
+| 97152 | Supporting assessment | Technician | $32 |
+| 97153 | Adaptive behavior treatment by protocol | RBT | $19 |
+| 97154 | Group treatment by protocol | RBT | $11.50 |
+| 97155 | Treatment with protocol modification | BCBA | $38 |
+| 97156 | Family treatment guidance | BCBA | $36 |
+| 97157 | Multiple-family group treatment | BCBA | $16 |
+| 97158 | Group treatment with modification | BCBA | $22 |
+
+## For Real-World Implementation
+- **Best data source**: T-MSIS Analytic Files (Medicaid claims) - requires ResDAC DUA
+- **Fraud labels**: Cross-reference LEIE exclusion list filtered by taxonomy 103K00000X (Behavioral Analyst)
+- **Provider universe**: NPPES NPI file filtered by taxonomy 103K00000X and 106E00000X
 - The dataset is SYNTHETIC - not suitable for real fraud investigations
 - Model performance reflects synthetic data characteristics, not real-world performance
-- Real-world deployment would need actual Medicaid claims data and validated fraud labels
 - The CMS CRUSH Initiative (Feb 2026) signals major federal investment in AI-based fraud detection

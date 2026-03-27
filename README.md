@@ -102,17 +102,32 @@ Our approach combines three complementary strategies:
   - Massachusetts: $16.7M overpayments from supervision ratio violations (2024)
 - **Limitations**: Aggregated findings, not individual claim-level data.
 
+#### 5. T-MSIS Analytic Files (Medicaid Claims -- Restricted Access)
+- **Source**: [medicaid.gov/T-MSIS](https://www.medicaid.gov/medicaid/data-systems/macbis/medicaid-chip-research-files/transformed-medicaid-statistical-information-system-t-msis-analytic-files-taf)
+- **Reliability: 10/10**
+- **Why reliable**: THE GOLD STANDARD for ABA fraud research. Most comprehensive Medicaid claims dataset - enrollment, demographics, service utilization, and payments for all Medicaid/CHIP beneficiaries across all states. Likely the data HHS-OIG used for their state audit series.
+- **Relevance to ABA**: Contains all ABA claims (97151-97158, T1024, etc.) across all states. Since ABA is predominantly Medicaid-funded (children/autism), this is the primary data source.
+- **Limitations**: **Not freely downloadable.** Requires application through ResDAC and a CMS Data Use Agreement. Restricted to approved researchers.
+
 ### Tier 2: Academic/Curated Datasets (High Reliability)
 
-#### 5. Kaggle Healthcare Provider Fraud Detection Dataset
+#### 6. Kaggle Healthcare Provider Fraud Detection Dataset
 - **Source**: [kaggle.com/datasets/rohitrox/healthcare-provider-fraud-detection-analysis](https://www.kaggle.com/datasets/rohitrox/healthcare-provider-fraud-detection-analysis)
+- **Also on Mendeley**: [data.mendeley.com/datasets/gsn2hyty37/1](https://data.mendeley.com/datasets/gsn2hyty37/1)
 - **Reliability: 7/10**
-- **Why somewhat reliable**: Based on Medicare claims data structure with realistic features (beneficiary demographics, diagnosis codes, physician IDs, claim amounts). 5,410 providers with 9.35% fraud rate. Widely used in academic research and ML competitions.
+- **Why somewhat reliable**: Based on Medicare claims data structure with realistic features (beneficiary demographics, diagnosis codes, physician IDs, claim amounts). 5,410 providers with 9.35% fraud rate. 4 CSV files: Beneficiary, Inpatient, Outpatient, and Provider fraud labels. Widely used in academic research and ML competitions.
 - **Why not fully reliable**: The fraud labels are synthetic/derived - the dataset creator determined fraud labels based on patterns, not confirmed investigations. The underlying data may be a realistic simulation rather than actual Medicare data. No direct link to DOJ/OIG fraud convictions.
 - **Relevance to ABA**: General healthcare fraud patterns. Used to validate our synthetic data's statistical properties (class imbalance ratio, feature distributions).
 - **Our validation**: Our synthetic dataset matches this dataset's fraud rate (~9.5%) and feature distribution patterns.
 
-#### 6. Journal of Big Data - Medicare Fraud Detection Dataset
+#### 7. Kaggle NHIS Healthcare Claims and Fraud Dataset
+- **Source**: [kaggle.com/datasets/bonifacechosen/nhis-healthcare-claims-and-fraud-dataset](https://www.kaggle.com/datasets/bonifacechosen/nhis-healthcare-claims-and-fraud-dataset)
+- **Reliability: 6/10**
+- **Why somewhat reliable**: Another labeled fraud detection dataset with claims-level data. Freely downloadable on Kaggle.
+- **Why not fully reliable**: Less widely cited than the rohitrox dataset. Provenance and label generation methodology less documented.
+- **Relevance to ABA**: Provides an alternative labeled dataset for developing and benchmarking fraud detection methodologies.
+
+#### 8. Journal of Big Data - Medicare Fraud Detection Dataset
 - **Source**: [journalofbigdata.springeropen.com](https://journalofbigdata.springeropen.com/articles/10.1186/s40537-023-00821-5)
 - **Reliability: 8/10**
 - **Why reliable**: Peer-reviewed research using publicly available Medicare claims data combined with LEIE exclusion data for ground-truth labels. Reproducible methodology.
@@ -124,10 +139,13 @@ Our approach combines three complementary strategies:
 - **Source**: [justice.gov](https://www.justice.gov)
 - **Reliability: 8/10 (for cases mentioned), 6/10 (for generalizing patterns)**
 - **Why reliable**: Confirmed fraud cases with conviction details. June 2025 DOJ healthcare fraud takedown: $14.6B in fraudulent claims, 324 defendants.
-- **Relevance to ABA**: Multiple ABA-specific fraud cases documented. Massachusetts AG indicted ABA provider for $1M+ in false claims (Jun 2025).
+- **Relevance to ABA**: Multiple confirmed ABA-specific fraud cases:
+  - **Smart Therapy LLC (MN)**: $14M+ Medicaid fraud, billed max authorized hours for services not rendered, paid kickbacks to families. Guilty plea. ([IRS](https://www.irs.gov/compliance/criminal-investigation/first-defendant-charged-in-autism-fraud-scheme))
+  - **Minds Cornerstone (CT)**: $1.88M fraud, billing ABA supervision without services. 78 months prison. ([DOJ](https://www.justice.gov/usao-ct/pr/two-charged-defrauding-connecticuts-medicaid-program))
+  - **Lamour by Design (MA)**: $1M+ false claims, employees instructed to bill "based on historical data." Indicted Jun 2025. ([Mass.gov](https://www.mass.gov/news/ags-office-secures-indictments-against-randolph-autism-service-provider-for-allegedly-submitting-more-than-1-million-in-false-claims))
 - **Limitations**: Selection bias - only includes cases that were prosecuted. Does not represent the full spectrum of fraud.
 
-#### 8. CMS CRUSH Initiative Data
+#### 10. CMS CRUSH Initiative Data
 - **Source**: [cms.gov/newsroom](https://www.cms.gov/newsroom/press-releases/trump-administration-prioritizes-affordability-announcing-major-crackdown-health-care-fraud)
 - **Reliability: 7/10**
 - **Why reliable**: Official CMS figures: suspended $5.7B in suspected fraudulent Medicare payments in 2025, denied 122,658 claims, revoked 5,586 providers.
@@ -135,7 +153,7 @@ Our approach combines three complementary strategies:
 
 ### Tier 4: Our Synthetic Dataset (Validated Simulation)
 
-#### 9. This Project's Synthetic ABA Fraud Dataset
+#### 11. This Project's Synthetic ABA Fraud Dataset
 - **Reliability: 6/10** (as a training tool) / **3/10** (as real-world evidence)
 - **Why we built it**: No public dataset exists specifically for ABA therapy fraud detection. ABA therapy is primarily Medicaid-funded (children/autism), while most public fraud datasets are Medicare-focused.
 - **Validation against real data**:
