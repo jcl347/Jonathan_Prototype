@@ -98,7 +98,8 @@ Our approach combines three complementary strategies:
 - **Key findings used in our model**:
   - Indiana: $56M in improper ABA payments (Dec 2024)
   - Colorado: $77.8M improper + $207.4M potentially improper (2025-2026)
-  - Wisconsin: $18.5M in improper payments (Jul 2025)
+  - Maine: $45.6M in improper payments ([OIG](https://oig.hhs.gov/newsroom/news-releases-articles/hhs-oig-audit-finds-maine-made-at-least-456-million-in-improper-medicaid-payments-for-autism-services/))
+  - Wisconsin: $18.5M confirmed + $94.3M potential (Jul 2025) ([OIG](https://oig.hhs.gov/reports/all/2025/wisconsin-made-at-least-185-million-in-improper-fee-for-service-medicaid-payments-for-applied-behavior-analysis-provided-to-children-diagnosed-with-autism/))
   - Massachusetts: $16.7M overpayments from supervision ratio violations (2024)
 - **Limitations**: Aggregated findings, not individual claim-level data.
 
@@ -200,3 +201,9 @@ Based on HHS-OIG audit findings and DOJ enforcement actions:
 8. CMS Medicare Provider Data. [Link](https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners)
 9. HHS-OIG LEIE. [Link](https://oig.hhs.gov/exclusions/exclusions_list.asp)
 10. Behavioral Health Business: ABA Volume +267% (Dec 2025). [Link](https://bhbusiness.com/2025/12/22/aba-volume-skyrocketed-by-267-from-2019-to-2024/)
+11. du Preez et al. (2025). "Fraud detection in healthcare claims using ML: A systematic review." *Artificial Intelligence in Medicine*. [Link](https://www.sciencedirect.com/science/article/pii/S0933365724003038)
+12. Herland et al. (2023). "Explainable ML models for Medicare fraud detection." *Journal of Big Data*. [Link](https://journalofbigdata.springeropen.com/articles/10.1186/s40537-023-00821-5)
+13. Oskarsdottir et al. (2022). "Social Network Analytics for Supervised Fraud Detection in Insurance." *Risk Analysis*. [Link](https://onlinelibrary.wiley.com/doi/10.1111/risa.13693)
+14. Tsega et al. (2025). "Fraud detection in medical claims using GNN architectures." *Scientific Reports*. [Link](https://www.nature.com/articles/s41598-025-22910-6)
+15. OIG Maine ABA Audit. [Link](https://oig.hhs.gov/newsroom/news-releases-articles/hhs-oig-audit-finds-maine-made-at-least-456-million-in-improper-medicaid-payments-for-autism-services/)
+16. OIG Wisconsin ABA Audit. [Link](https://oig.hhs.gov/reports/all/2025/wisconsin-made-at-least-185-million-in-improper-fee-for-service-medicaid-payments-for-applied-behavior-analysis-provided-to-children-diagnosed-with-autism/)

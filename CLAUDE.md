@@ -40,6 +40,21 @@ This repository contains a fraud detection system for ABA (Applied Behavior Anal
 2. **PageRank** identifies central nodes that may be coordinating fraud across a network.
 3. **Community fraud rate > 30% with 3+ members** is a reasonable threshold for flagging suspicious communities.
 4. **Real fraud detection should combine** network analysis with billing pattern analysis - neither alone is sufficient.
+5. **GNN+Neo4j systems** can reach 91% accuracy and AUC of 0.961 for coordinated fraud rings (Tsega et al., 2025).
+6. **Oskarsdottir et al. (2022)** showed network-derived features outperform classical claim-specific features alone.
+
+### Methodology Research Findings (Literature Review)
+1. **Algorithm rankings** from systematic reviews (du Preez et al. 2025, 145+ applications):
+   - Random Forest: AUC 0.90-0.97 (consistently top performer)
+   - XGBoost: AUC 0.90-0.95 (best with SMOTE-ENN resampling)
+   - Isolation Forest: ~0.81 recall standalone (unsupervised)
+   - GNNs: AUC 0.91-0.96 on heterogeneous graphs
+2. **Class imbalance**: Fraud can be as low as 0.03% in Medicare datasets. SMOTE-ENN with XGBoost achieved AUC 0.95.
+3. **Unsupervised vs supervised**: Unsupervised max AUC ~0.729 vs supervised 0.969 on same Medicare data. But unsupervised is essential for novel pattern discovery.
+4. **Optimal layered approach**: Rule-based screening -> Supervised ML -> Unsupervised anomaly detection -> Graph analytics
+5. **Benford's Law**: Useful as first-line screening before ML. Applied to Korean HIRA data for large-scale screening.
+6. **Explainability is critical**: SHAP/LIME needed for regulatory acceptance (CMS CRUSH Initiative context).
+7. **Total OIG ABA audit findings across states**: ~$418M+ in improper/potentially improper payments (IN $56M + CO $285M + ME $45.6M + WI $18.5M + MA $16.7M).
 
 ## Running the Pipeline
 
