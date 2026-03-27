@@ -45,12 +45,18 @@ export default function ModelsPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/data/feature_importance.json").then((r) => r.json()),
-      fetch("/data/model_performance.json").then((r) => r.json()),
+      fetch("/data/feature_importance.json").then((r) => {
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.json();
+      }),
+      fetch("/data/model_performance.json").then((r) => {
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.json();
+      }),
     ]).then(([f, p]) => {
       setFeatures(f);
       setPerformance(p);
-    });
+    }).catch((err) => console.error("Failed to load model data:", err));
   }, []);
 
   if (!features.length || !performance) {

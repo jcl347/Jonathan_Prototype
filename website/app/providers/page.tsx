@@ -43,8 +43,12 @@ export default function ProvidersPage() {
 
   useEffect(() => {
     fetch("/data/providers.json")
-      .then((r) => r.json())
-      .then(setProviders);
+      .then((r) => {
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.json();
+      })
+      .then(setProviders)
+      .catch((err) => console.error("Failed to load providers:", err));
   }, []);
 
   const filtered = providers

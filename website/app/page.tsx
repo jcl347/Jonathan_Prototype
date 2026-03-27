@@ -52,18 +52,41 @@ export default function Dashboard() {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [performance, setPerformance] = useState<ModelPerformance | null>(null);
   const [claimsDist, setClaimsDist] = useState<ClaimsDist | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
-      fetch("/data/providers.json").then((r) => r.json()),
-      fetch("/data/model_performance.json").then((r) => r.json()),
-      fetch("/data/claims_distribution.json").then((r) => r.json()),
+      fetch("/data/providers.json").then((r) => {
+        if (!r.ok) throw new Error(`providers.json: ${r.status}`);
+        return r.json();
+      }),
+      fetch("/data/model_performance.json").then((r) => {
+        if (!r.ok) throw new Error(`model_performance.json: ${r.status}`);
+        return r.json();
+      }),
+      fetch("/data/claims_distribution.json").then((r) => {
+        if (!r.ok) throw new Error(`claims_distribution.json: ${r.status}`);
+        return r.json();
+      }),
     ]).then(([p, m, c]) => {
       setProviders(p);
       setPerformance(m);
       setClaimsDist(c);
+    }).catch((err) => {
+      console.error("Failed to load data:", err);
+      setError(err.message);
     });
   }, []);
+
+  if (error) {
+    return (
+      <div className="text-center py-20">
+        <p className="text-red-400 text-lg mb-2">Failed to load data</p>
+        <p className="text-gray-500 text-sm">{error}</p>
+        <p className="text-gray-600 text-xs mt-4">Ensure the analysis pipeline has been run: python3 scripts/fraud_analysis.py</p>
+      </div>
+    );
+  }
 
   if (!providers.length || !performance || !claimsDist) {
     return <div className="text-center py-20 text-gray-500">Loading dashboard...</div>;

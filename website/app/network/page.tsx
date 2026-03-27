@@ -46,12 +46,18 @@ export default function NetworkPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/data/communities.json").then((r) => r.json()),
-      fetch("/data/network.json").then((r) => r.json()),
+      fetch("/data/communities.json").then((r) => {
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.json();
+      }),
+      fetch("/data/network.json").then((r) => {
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.json();
+      }),
     ]).then(([c, n]) => {
       setCommunities(c);
       setNetwork(n);
-    });
+    }).catch((err) => console.error("Failed to load network data:", err));
   }, []);
 
   if (!communities.length || !network) {

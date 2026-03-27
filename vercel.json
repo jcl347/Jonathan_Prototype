@@ -1,6 +1,7 @@
 {
-  "buildCommand": "cd website && npm install && npm run build",
-  "outputDirectory": "website/out",
-  "installCommand": "cd website && npm install",
-  "framework": null
+  "buildCommand": "npm run build",
+  "outputDirectory": "out",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "rootDirectory": "website"
 }
