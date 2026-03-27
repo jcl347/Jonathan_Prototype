@@ -1,0 +1,58 @@
+{
+  "datasets": [
+    {
+      "id": "synthetic",
+      "name": "Synthetic ABA Fraud Dataset",
+      "description": "ML-generated dataset modeled on OIG audit findings. 500 providers, 50K claims, ~9.5% fraud rate.",
+      "source": "Generated (this project)",
+      "reliability": "6/10 (training) / 3/10 (evidence)",
+      "has_data": true,
+      "files": [
+        "providers.json",
+        "model_performance.json",
+        "feature_importance.json",
+        "network.json",
+        "communities.json",
+        "claims_distribution.json"
+      ]
+    },
+    {
+      "id": "leie",
+      "name": "LEIE Exclusion List (HHS-OIG)",
+      "description": "Official government list of individuals/entities excluded from federal healthcare programs. Ground-truth fraud labels.",
+      "source": "HHS Office of Inspector General",
+      "url": "https://oig.hhs.gov/exclusions/exclusions_list.asp",
+      "reliability": "10/10",
+      "has_data": true,
+      "files": [
+        "leie_dataset.json"
+      ]
+    },
+    {
+      "id": "cms",
+      "name": "CMS Medicare Provider Data",
+      "description": "Medicare claims data by NPI and HCPCS code. Filter by 97151-97158 for ABA therapy.",
+      "source": "Centers for Medicare & Medicaid Services",
+      "url": "https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider-and-service",
+      "reliability": "10/10",
+      "has_data": false,
+      "files": [
+        "cms_dataset.json"
+      ],
+      "download_required": true
+    },
+    {
+      "id": "tmsis",
+      "name": "T-MSIS Analytic Files (Medicaid Claims)",
+      "description": "Gold standard Medicaid claims data. Contains all ABA claims across all states. Requires DUA application.",
+      "source": "CMS via ResDAC",
+      "url": "https://resdac.org/",
+      "reliability": "10/10",
+      "has_data": false,
+      "files": [
+        "tmsis_dataset.json"
+      ],
+      "download_required": true
+    }
+  ]
+}

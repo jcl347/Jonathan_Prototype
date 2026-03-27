@@ -1,0 +1,63 @@
+{
+  "metadata": {
+    "dataset": "T-MSIS Analytic Files (TAF)",
+    "source": "CMS via ResDAC (Research Data Assistance Center)",
+    "url": "https://resdac.org/",
+    "status": "requires_dua_application",
+    "description": "The gold standard for ABA fraud research. Contains all Medicaid/CHIP claims across all states, including ABA therapy codes 97151-97158 and T1024.",
+    "data_years_available": "2014-2023 (2024 Annual available after 11/1/2026)",
+    "access_process": {
+      "step_1": {
+        "title": "Contact ResDAC",
+        "detail": "Email resdac@umn.edu or call 888-973-7322. ResDAC staff assist with completing all required forms.",
+        "url": "https://resdac.org/"
+      },
+      "step_2": {
+        "title": "Complete Data Use Agreement (DUA)",
+        "detail": "Legal agreement between CMS and your organization documenting terms, privacy and security requirements. Do not sign until directed by ResDAC.",
+        "url": "https://resdac.org/request-form/rif-data-use-agreement"
+      },
+      "step_3": {
+        "title": "Obtain IRB Approval + HIPAA Waiver",
+        "detail": "Your institution's IRB must approve the research. A HIPAA waiver of authorization meeting 45 CFR § 164.512(i)(1)(i) is required."
+      },
+      "step_4": {
+        "title": "CMS Privacy Board Review",
+        "detail": "CMS Privacy Board reviews the request, followed by a second-level review by the CMS Chief Data Officer."
+      },
+      "step_5": {
+        "title": "Access via VRDC",
+        "detail": "All research must be conducted in the CCW Virtual Research Data Center (VRDC). CMS is transitioning all research to VRDC starting 2025."
+      }
+    },
+    "costs": {
+      "initial_project_fee": "$20,000",
+      "annual_renewal_fee": "$10,000",
+      "vrdc_seat_fee": "Annual per-user fee (varies)",
+      "storage": "2 TB included per DUA, additional storage available",
+      "cost_estimator": "https://www2.ccwdata.org/web/guest/pricing/data-pricing",
+      "note": "For grant proposals, email resdac@umn.edu for formal cost estimates"
+    },
+    "timeline": "3-5 months from application to data access",
+    "dua_duration": "1 year (renewable annually)",
+    "taf_file_types": [
+      {"file": "TAF Demographic and Eligibility (DE)", "description": "Beneficiary demographics, eligibility, enrollment"},
+      {"file": "TAF Inpatient (IP)", "description": "Inpatient hospital claims"},
+      {"file": "TAF Other Services (OT)", "description": "All other claims including ABA therapy (outpatient, professional, home health)"},
+      {"file": "TAF Pharmacy (RX)", "description": "Pharmacy claims"},
+      {"file": "TAF Long-Term Care (LT)", "description": "Long-term care claims"},
+      {"file": "TAF Managed Care (MC)", "description": "Managed care plan data"},
+      {"file": "TAF Provider (PR)", "description": "Provider characteristics"}
+    ],
+    "aba_relevant_files": ["TAF Other Services (OT) - contains all ABA outpatient claims", "TAF Demographic and Eligibility (DE) - patient demographics", "TAF Provider (PR) - provider details"],
+    "key_references": [
+      {"title": "T-MSIS TAF on Medicaid.gov", "url": "https://www.medicaid.gov/medicaid/data-systems/macbis/medicaid-chip-research-files/transformed-medicaid-statistical-information-system-t-msis-analytic-files-taf"},
+      {"title": "ResDAC: Request CMS Data", "url": "https://resdac.org/"},
+      {"title": "CMS Fee Information", "url": "https://resdac.org/cms-fee-information-research-identifiable-data"},
+      {"title": "RIF DUA Policy Guide (PDF)", "url": "https://www.cms.gov/files/document/research-identifiable-file-data-use-agreement-policies.pdf"},
+      {"title": "CCW TAF RIF User Guide (PDF)", "url": "https://www2.ccwdata.org/documents/10280/19002246/ccw-taf-rif-user-guide.pdf"},
+      {"title": "TAF Analysis Reporting Checklist (JAMA)", "url": "https://jamanetwork.com/journals/jama-health-forum/fullarticle/2840338"}
+    ]
+  },
+  "providers": []
+}

@@ -91,6 +91,15 @@ cd website && npm install && npm run dev
 | 97157 | Multiple-family group treatment | BCBA | $16 |
 | 97158 | Group treatment with modification | BCBA | $22 |
 
+## T-MSIS Access Process (Gold Standard Data)
+- **Contact**: ResDAC at resdac@umn.edu or 888-973-7322
+- **Cost**: $20,000 initial project fee + $10,000/yr renewal + VRDC seat fees
+- **Timeline**: 3-5 months from application to data access
+- **Requirements**: DUA, IRB approval, HIPAA waiver, CMS Privacy Board review
+- **Data years**: 2014-2023 available (2024 after 11/1/2026)
+- **Key files for ABA**: TAF Other Services (OT) for claims, TAF DE for demographics, TAF PR for providers
+- **All research must use VRDC** (Virtual Research Data Center) starting 2025
+
 ## For Real-World Implementation
 - **Best data source**: T-MSIS Analytic Files (Medicaid claims) - requires ResDAC DUA
 - **Fraud labels**: Cross-reference LEIE exclusion list filtered by taxonomy 103K00000X (Behavioral Analyst)
