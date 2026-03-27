@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card: #141414;
+  --card-border: #2a2a2a;
+  --accent: #3b82f6;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #22c55e;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.risk-critical { color: #ef4444; }
+.risk-high { color: #f59e0b; }
+.risk-medium { color: #eab308; }
+.risk-low { color: #22c55e; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge-critical { background: #ef44441a; color: #ef4444; border: 1px solid #ef444433; }
+.badge-high { background: #f59e0b1a; color: #f59e0b; border: 1px solid #f59e0b33; }
+.badge-medium { background: #eab3081a; color: #eab308; border: 1px solid #eab30833; }
+.badge-low { background: #22c55e1a; color: #22c55e; border: 1px solid #22c55e33; }

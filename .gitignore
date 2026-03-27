@@ -1,0 +1,17 @@
+node_modules/
+.next/
+.env
+.env.local
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.DS_Store
+*.csv
+*.parquet
+data/raw/
+data/processed/
+!data/.gitkeep
