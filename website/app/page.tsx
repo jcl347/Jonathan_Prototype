@@ -6,6 +6,7 @@ import {
   PieChart, Pie, Cell, ScatterChart, Scatter, ZAxis, Legend, LineChart, Line,
 } from "recharts";
 import { useDataset } from "./dataset-context";
+import { ClientOnly } from "./client-only";
 
 interface Provider {
   provider_id: string;
@@ -464,7 +465,7 @@ function TmsisDashboard() {
   );
 }
 
-export default function Dashboard() {
+function DashboardInner() {
   const { currentDataset, datasets } = useDataset();
 
   const currentInfo = datasets.find((d) => d.id === currentDataset);
@@ -489,5 +490,13 @@ export default function Dashboard() {
       {currentDataset === "cms" && <CmsDashboard />}
       {currentDataset === "tmsis" && <TmsisDashboard />}
     </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <ClientOnly>
+      <DashboardInner />
+    </ClientOnly>
   );
 }

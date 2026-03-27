@@ -5,6 +5,7 @@ import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
+import { ClientOnly } from "../client-only";
 
 interface Provider {
   provider_id: string;
@@ -34,7 +35,7 @@ interface Provider {
   weighted_degree: number;
 }
 
-export default function ProvidersPage() {
+function ProvidersPageInner() {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [selected, setSelected] = useState<Provider | null>(null);
   const [filter, setFilter] = useState<string>("all");
@@ -290,4 +291,8 @@ export default function ProvidersPage() {
       </div>
     </div>
   );
+}
+
+export default function ProvidersPage() {
+  return <ClientOnly><ProvidersPageInner /></ClientOnly>;
 }

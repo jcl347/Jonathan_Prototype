@@ -5,6 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend,
 } from "recharts";
+import { ClientOnly } from "../client-only";
 
 interface FeatureImportance {
   feature: string;
@@ -39,7 +40,7 @@ interface AllPerformance {
   isolation_forest: ModelPerf;
 }
 
-export default function ModelsPage() {
+function ModelsPageInner() {
   const [features, setFeatures] = useState<FeatureImportance[]>([]);
   const [performance, setPerformance] = useState<AllPerformance | null>(null);
 
@@ -276,4 +277,8 @@ export default function ModelsPage() {
       </div>
     </div>
   );
+}
+
+export default function ModelsPage() {
+  return <ClientOnly><ModelsPageInner /></ClientOnly>;
 }

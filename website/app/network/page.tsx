@@ -5,6 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   ScatterChart, Scatter, ZAxis, Cell,
 } from "recharts";
+import { ClientOnly } from "../client-only";
 
 interface Community {
   community_id: number;
@@ -39,7 +40,7 @@ interface NetworkData {
   edges: NetworkEdge[];
 }
 
-export default function NetworkPage() {
+function NetworkPageInner() {
   const [communities, setCommunities] = useState<Community[]>([]);
   const [network, setNetwork] = useState<NetworkData | null>(null);
   const [selectedCommunity, setSelectedCommunity] = useState<Community | null>(null);
@@ -327,4 +328,8 @@ export default function NetworkPage() {
       </div>
     </div>
   );
+}
+
+export default function NetworkPage() {
+  return <ClientOnly><NetworkPageInner /></ClientOnly>;
 }

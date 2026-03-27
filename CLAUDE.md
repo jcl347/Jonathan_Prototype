@@ -29,6 +29,7 @@ This repository contains a fraud detection system for ABA (Applied Behavior Anal
    - For monorepo setups, use `cd website &&` prefix in `buildCommand` and `installCommand` instead.
    - When using `framework: "nextjs"`, Vercel expects `.next/routes-manifest.json` - do NOT use `output: "export"` with static `out/` directory. Remove `output: "export"` from next.config.ts and set `outputDirectory` to `website/.next`.
    - Root `package.json` must list `next` in dependencies for Vercel framework detection, even if the actual app is in a subdirectory.
+5. **Recharts + Next.js SSR crash**: Recharts uses browser APIs (window, document) that don't exist during SSR. Even with `"use client"`, Next.js 16 pre-renders on the server. Fix: wrap all pages using recharts with a `ClientOnly` component that defers rendering until after mount (`useEffect(() => setMounted(true), [])`).
 5. **create-next-app interactive mode**: The CLI prompts cannot be answered in non-interactive environments. Initialize manually with `npm init` + install dependencies.
 
 ### Fraud Pattern Learnings (from HHS-OIG audits)
