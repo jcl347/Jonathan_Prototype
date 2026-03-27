@@ -387,7 +387,7 @@ def analyze_network(G, communities, community_map, providers):
 
 def generate_website_data(feature_df, model_results, community_analysis, providers, claims, G):
     """Generate JSON data for the Next.js website."""
-    os.makedirs("website/public/data", exist_ok=True)
+    os.makedirs("public/data", exist_ok=True)
 
     # --- Provider Risk Scores ---
     provider_risk = feature_df.copy()
@@ -559,25 +559,25 @@ def generate_website_data(feature_df, model_results, community_analysis, provide
                 return bool(obj)
             return super().default(obj)
 
-    with open("website/public/data/providers.json", "w") as f:
+    with open("public/data/providers.json", "w") as f:
         json.dump(provider_summary, f, cls=NumpyEncoder)
 
-    with open("website/public/data/model_performance.json", "w") as f:
+    with open("public/data/model_performance.json", "w") as f:
         json.dump(model_performance, f, cls=NumpyEncoder)
 
-    with open("website/public/data/feature_importance.json", "w") as f:
+    with open("public/data/feature_importance.json", "w") as f:
         json.dump(feature_importance, f, cls=NumpyEncoder)
 
-    with open("website/public/data/network.json", "w") as f:
+    with open("public/data/network.json", "w") as f:
         json.dump(network_data, f, cls=NumpyEncoder)
 
-    with open("website/public/data/communities.json", "w") as f:
+    with open("public/data/communities.json", "w") as f:
         json.dump(community_data, f, cls=NumpyEncoder)
 
-    with open("website/public/data/claims_distribution.json", "w") as f:
+    with open("public/data/claims_distribution.json", "w") as f:
         json.dump(claims_dist, f, cls=NumpyEncoder)
 
-    print(f"Website data saved to website/public/data/")
+    print(f"Website data saved to public/data/")
     return provider_risk
 
 

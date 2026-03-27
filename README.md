@@ -5,18 +5,17 @@ Multi-model fraud detection pipeline for Applied Behavior Analysis (ABA) therapy
 ## Project Structure
 
 ```
+├── app/                          # Next.js pages (Vercel-ready)
+│   ├── page.tsx                  # Main dashboard with dataset switcher
+│   ├── providers/page.tsx        # Individual provider fraud analysis
+│   ├── network/page.tsx          # Network/community analysis
+│   └── models/page.tsx           # Model performance comparison
+├── public/data/                  # JSON data for visualizations
 ├── scripts/
 │   ├── generate_aba_dataset.py   # Synthetic data generation
-│   └── fraud_analysis.py         # ML pipeline + network analysis
-├── data/
-│   └── generated/                # Generated datasets (CSV + JSON)
-├── website/                      # Next.js dashboard (Vercel-ready)
-│   ├── app/
-│   │   ├── page.tsx              # Main dashboard
-│   │   ├── providers/page.tsx    # Individual provider analysis
-│   │   ├── network/page.tsx      # Network/community analysis
-│   │   └── models/page.tsx       # Model performance comparison
-│   └── public/data/              # JSON data for visualizations
+│   ├── fraud_analysis.py         # ML pipeline + network analysis
+│   └── curate_real_datasets.py   # Download & process LEIE data
+├── data/                         # Generated datasets (CSV, gitignored)
 ├── CLAUDE.md                     # Learnings and development notes
 └── README.md
 ```
@@ -30,8 +29,11 @@ python3 scripts/generate_aba_dataset.py
 # 2. Run fraud analysis pipeline
 python3 scripts/fraud_analysis.py
 
-# 3. Run the website
-cd website && npm install && npm run dev
+# 3. Download real LEIE data
+python3 scripts/curate_real_datasets.py
+
+# 4. Run the website locally
+npm install && npm run dev
 ```
 
 ## Methodology

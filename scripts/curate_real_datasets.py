@@ -17,7 +17,7 @@ import os
 import subprocess
 from datetime import datetime
 
-OUTPUT_DIR = "website/public/data"
+OUTPUT_DIR = "public/data"
 
 # ABA-related specialties in LEIE
 ABA_SPECIALTIES = [
@@ -338,5 +338,5 @@ if __name__ == "__main__":
         json.dump(datasets_index, f, indent=2)
 
     print("\n" + "=" * 60)
-    print("Done! Dataset files saved to website/public/data/")
+    print("Done! Dataset files saved to public/data/")
     print("=" * 60)

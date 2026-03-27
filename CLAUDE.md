@@ -67,16 +67,25 @@ This repository contains a fraud detection system for ABA (Applied Behavior Anal
 # Generate data
 python3 scripts/generate_aba_dataset.py
 
-# Run analysis (generates website data)
+# Run analysis (generates website data in public/data/)
 python3 scripts/fraud_analysis.py
 
+# Download real LEIE data
+python3 scripts/curate_real_datasets.py
+
 # Run website
-cd website && npm install && npm run dev
+npm install && npm run dev
 ```
 
 ## Dependencies
 - Python: pandas, numpy, scikit-learn, xgboost, networkx, matplotlib, seaborn
 - Node.js: next, react, recharts, tailwindcss, typescript
+
+## Vercel Deployment
+- Next.js app lives at repo root (NOT in a subdirectory) — this is what Vercel expects
+- No vercel.json needed — Vercel auto-detects Next.js from package.json
+- Do NOT use `output: "export"` — let Vercel handle Next.js natively
+- Previous attempts with `website/` subdirectory failed repeatedly due to framework detection, SSR issues, and output directory mismatches
 
 ## Real-World ABA Fraud Cases (Reference for Pattern Validation)
 1. **Smart Therapy LLC (MN)**: $14M+ Medicaid fraud. Billed max authorized EIDBI hours for services not rendered. Paid kickbacks ($1,000+/child) to Somali families. EIDBI providers grew 700% (41 to 300+) in 5 years in MN.
