@@ -52,7 +52,7 @@ export default function ProvidersPage() {
         <div className="lg:col-span-1 space-y-2 max-h-[700px] overflow-y-auto pr-2">
           {filtered.slice(0, 50).map(p => (
             <div key={p.provider_id} onClick={() => setSelected(p)} className={`card cursor-pointer transition hover:border-blue-500/50 ${selected?.provider_id === p.provider_id ? "border-blue-500" : ""}`} style={{ padding: "0.75rem 1rem" }}>
-              <div className="flex justify-between items-start"><div><p className="text-sm font-mono">{p.provider_id.slice(0, 14)}...</p><p className="text-xs text-gray-500">{p.state} | {p.credential}</p></div><span className={`badge badge-${p.risk_level.toLowerCase()}`}>{p.risk_level}</span></div>
+              <div className="flex justify-between items-start"><div><p className="text-sm font-mono">{String(p.provider_id).slice(0, 14)}...</p><p className="text-xs text-gray-500">{p.state} | {p.credential}</p></div><span className={`badge badge-${p.risk_level.toLowerCase()}`}>{p.risk_level}</span></div>
               <div className="flex gap-4 mt-1 text-xs text-gray-500"><span>Score: {p.ensemble_score.toFixed(3)}</span><span>${(p.total_billed / 1000).toFixed(0)}k</span></div>
             </div>
           ))}
