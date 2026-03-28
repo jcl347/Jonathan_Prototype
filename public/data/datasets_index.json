@@ -30,16 +30,15 @@
     },
     {
       "id": "cms",
-      "name": "CMS Medicare Provider Data",
-      "description": "Medicare claims data by NPI and HCPCS code. Filter by 97151-97158 for ABA therapy.",
+      "name": "CMS Medicare Provider Data (ABA)",
+      "description": "Real Medicare claims for ABA therapy codes 97151-97158 across 2019-2023. Cross-referenced with LEIE exclusions.",
       "source": "Centers for Medicare & Medicaid Services",
       "url": "https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider-and-service",
       "reliability": "10/10",
-      "has_data": false,
+      "has_data": true,
       "files": [
         "cms_dataset.json"
-      ],
-      "download_required": true
+      ]
     },
     {
       "id": "tmsis",

@@ -129,12 +129,67 @@ function LeieDashboard() {
   );
 }
 
+interface CmsData {
+  metadata: { dataset: string; source: string; url: string; status: string; total_aba_records?: number; unique_providers?: number; excluded_providers?: number; years_covered?: string[]; notes: string };
+  providers: Array<Record<string, unknown>>;
+  by_code?: Array<{ hcpcs_code: string; providers: number; total_services: number; avg_submitted_charge: number; avg_medicare_payment: number }>;
+  by_state?: Array<{ state: string; providers: number; total_services: number }>;
+  by_year?: Array<{ year: string; providers: number; total_services: number }>;
+  by_provider_type?: Array<{ provider_type: string; count: number }>;
+}
+
 function CmsDashboard() {
+  const [data, setData] = useState<CmsData | null>(null);
+  useEffect(() => { fetch("/data/cms_dataset.json").then(r => r.ok ? r.json() : null).then(setData).catch(() => {}); }, []);
+  if (!data) return <div className="text-center py-20 text-gray-500">Loading CMS data...</div>;
+  const m = data.metadata;
+  const hasData = m.status === "loaded" && data.providers.length > 0;
+
+  if (!hasData) {
+    return (
+      <div className="space-y-8">
+        <div><h2 className="text-2xl font-bold mb-1">CMS Medicare Provider Data</h2><p className="text-gray-500 text-sm">Data not yet loaded. Run the pipeline to fetch it.</p></div>
+        <div className="card"><p className="text-sm text-gray-400">Run: <code className="bg-[#1a1a1a] px-2 py-1 rounded">python3 scripts/curate_real_datasets.py</code></p></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
-      <div><h2 className="text-2xl font-bold mb-1">CMS Medicare Provider Data</h2><p className="text-gray-500 text-sm">Real Medicare claims by NPI and HCPCS code</p><p className="text-xs text-green-500 mt-1">Reliability: 10/10 | <a href="https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider-and-service" className="underline" target="_blank" rel="noopener">CMS</a></p></div>
-      <div className="card"><h3 className="text-sm font-semibold mb-4 text-amber-400">Manual Download Required</h3><ol className="space-y-2 text-sm text-gray-300 list-decimal list-inside"><li>Visit the CMS dataset URL above</li><li>Download full dataset for the most recent year</li><li>Filter by HCPCS codes: 97151-97158 (ABA therapy)</li><li>Place filtered CSV in data/real/cms_aba_providers.csv</li><li>Re-run python3 scripts/curate_real_datasets.py</li></ol></div>
-      <div className="card"><h3 className="text-sm font-semibold mb-4 text-gray-400">ABA HCPCS Codes</h3><div className="grid grid-cols-2 md:grid-cols-4 gap-3">{[["97151","Behavior ID assessment"],["97152","Supporting assessment"],["97153","Treatment by protocol"],["97154","Group treatment"],["97155","Protocol modification"],["97156","Family guidance"],["97157","Multi-family group"],["97158","Group modification"]].map(([code, desc]) => (<div key={code} className="bg-[#1a1a1a] rounded-lg p-3"><p className="text-blue-400 font-mono font-bold">{code}</p><p className="text-xs text-gray-500 mt-1">{desc}</p></div>))}</div></div>
+      <div>
+        <h2 className="text-2xl font-bold mb-1">CMS Medicare ABA Provider Data</h2>
+        <p className="text-gray-500 text-sm">Real Medicare Part B claims for ABA therapy codes 97151-97158 ({m.years_covered?.join(", ")})</p>
+        <p className="text-xs text-green-500 mt-1">Reliability: 10/10 | Source: <a href={m.url} className="underline" target="_blank" rel="noopener">CMS</a></p>
+        <p className="text-xs text-amber-500 mt-1">{m.notes}</p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <StatCard label="ABA Records" value={m.total_aba_records || 0} />
+        <StatCard label="Unique Providers" value={m.unique_providers || 0} color="text-blue-400" />
+        <StatCard label="LEIE Excluded" value={m.excluded_providers || 0} color="text-red-400" />
+        <StatCard label="Years Covered" value={m.years_covered?.length || 0} />
+      </div>
+      {data.by_code && data.by_code.length > 0 && (
+        <div className="card">
+          <h3 className="text-sm font-semibold mb-4 text-gray-400">ABA Claims by HCPCS Code</h3>
+          <BarChart data={data.by_code} labelKey="hcpcs_code" valueKey="total_services" />
+          <div className="mt-4 overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 text-xs uppercase border-b border-[#2a2a2a]"><th className="text-left py-2 px-2">Code</th><th className="text-right py-2 px-2">Providers</th><th className="text-right py-2 px-2">Services</th><th className="text-right py-2 px-2">Avg Submitted</th><th className="text-right py-2 px-2">Avg Payment</th></tr></thead>
+          <tbody>{data.by_code.map(c => (<tr key={c.hcpcs_code} className="border-b border-[#1a1a1a]"><td className="py-2 px-2 font-mono text-blue-400">{c.hcpcs_code}</td><td className="py-2 px-2 text-right">{c.providers}</td><td className="py-2 px-2 text-right">{c.total_services.toLocaleString()}</td><td className="py-2 px-2 text-right">${c.avg_submitted_charge.toFixed(2)}</td><td className="py-2 px-2 text-right">${c.avg_medicare_payment.toFixed(2)}</td></tr>))}</tbody></table></div>
+        </div>
+      )}
+      {data.by_state && data.by_state.length > 0 && (
+        <div className="card"><h3 className="text-sm font-semibold mb-4 text-gray-400">ABA Providers by State</h3><BarChart data={data.by_state} labelKey="state" valueKey="providers" color="#3b82f6" horizontal /></div>
+      )}
+      {data.by_year && data.by_year.length > 0 && (
+        <div className="card"><h3 className="text-sm font-semibold mb-4 text-gray-400">ABA Claims by Year</h3><BarChart data={data.by_year} labelKey="year" valueKey="total_services" color="#22c55e" /></div>
+      )}
+      {data.by_provider_type && data.by_provider_type.length > 0 && (
+        <div className="card"><h3 className="text-sm font-semibold mb-4 text-gray-400">Provider Types Billing ABA Codes</h3><BarChart data={data.by_provider_type} labelKey="provider_type" valueKey="count" color="#8b5cf6" horizontal /></div>
+      )}
+      <div className="card">
+        <h3 className="text-sm font-semibold mb-4 text-gray-400">ABA Providers (Top by Services)</h3>
+        <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-gray-500 text-xs uppercase border-b border-[#2a2a2a]"><th className="text-left py-2 px-2">NPI</th><th className="text-left py-2 px-2">Name</th><th className="text-left py-2 px-2">State</th><th className="text-left py-2 px-2">Type</th><th className="text-right py-2 px-2">Services</th><th className="text-right py-2 px-2">Beneficiaries</th><th className="text-left py-2 px-2">Codes</th><th className="text-center py-2 px-2">LEIE</th></tr></thead>
+        <tbody>{data.providers.slice(0, 25).map((p, i) => (<tr key={i} className="border-b border-[#1a1a1a]"><td className="py-2 px-2 font-mono text-xs">{String(p.provider_id)}</td><td className="py-2 px-2 text-xs">{String(p.provider_name)}</td><td className="py-2 px-2">{String(p.state)}</td><td className="py-2 px-2 text-xs">{String(p.provider_type)}</td><td className="py-2 px-2 text-right">{Number(p.total_services).toLocaleString()}</td><td className="py-2 px-2 text-right">{Number(p.total_beneficiaries)}</td><td className="py-2 px-2 text-xs font-mono">{String(p.codes_used)}</td><td className="py-2 px-2 text-center">{p.is_excluded ? <span className="text-red-400 font-bold">EXCLUDED</span> : <span className="text-green-400">Clear</span>}</td></tr>))}</tbody></table></div>
+      </div>
     </div>
   );
 }

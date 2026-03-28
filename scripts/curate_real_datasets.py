@@ -232,6 +232,186 @@ def process_leie(leie_path):
     return leie_dataset
 
 
+def download_cms_aba_data():
+    """Download CMS Medicare Physician data filtered for ABA HCPCS codes across multiple years."""
+    import csv
+    import io
+    import urllib.request
+
+    cms_csv_path = "data/real/cms_aba_all_years.csv"
+    os.makedirs("data/real", exist_ok=True)
+
+    if os.path.exists(cms_csv_path) and os.path.getsize(cms_csv_path) > 100:
+        print(f"   CMS ABA data already downloaded: {cms_csv_path}")
+        return cms_csv_path
+
+    CMS_URLS = {
+        2023: "https://data.cms.gov/sites/default/files/2025-04/e3f823f8-db5b-4cc7-ba04-e7ae92b99757/MUP_PHY_R25_P05_V20_D23_Prov_Svc.csv",
+        2022: "https://data.cms.gov/sites/default/files/2025-11/53fb2bae-4913-48dc-a6d4-d8c025906567/MUP_PHY_R25_P05_V20_D22_Prov_Svc.csv",
+        2021: "https://data.cms.gov/sites/default/files/2025-11/bffaf97a-c2ab-4fd7-8718-be90742e3485/MUP_PHY_R25_P05_V20_D21_Prov_Svc.csv",
+        2020: "https://data.cms.gov/sites/default/files/2025-11/d22b18cd-7726-4bf5-8e9c-3e4587c589a1/MUP_PHY_R25_P05_V20_D20_Prov_Svc.csv",
+        2019: "https://data.cms.gov/sites/default/files/2025-11/7befba27-752e-47a8-a76c-6c6d4f74f2e3/MUP_PHY_R25_P04_V20_D19_Prov_Svc.csv",
+    }
+    ABA_CODES = {"97151", "97152", "97153", "97154", "97155", "97156", "97157", "97158"}
+
+    all_rows = []
+    header = None
+
+    for year, url in sorted(CMS_URLS.items()):
+        print(f"   Downloading CMS {year} (~9.6M rows, filtering for ABA codes)...")
+        try:
+            response = urllib.request.urlopen(url, timeout=600)
+            reader = csv.reader(io.TextIOWrapper(response, encoding='utf-8'))
+            count = 0
+            year_rows = 0
+            for row in reader:
+                count += 1
+                if count == 1:
+                    if header is None:
+                        header = row + ["Data_Year"]
+                    continue
+                if len(row) > 17 and row[17] in ABA_CODES:
+                    all_rows.append(row + [str(year)])
+                    year_rows += 1
+            print(f"   {year}: {count:,} rows scanned, {year_rows} ABA rows found")
+        except Exception as e:
+            print(f"   {year}: ERROR - {e}")
+
+    print(f"   Total ABA rows across all years: {len(all_rows)}")
+
+    with open(cms_csv_path, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(header)
+        w.writerows(all_rows)
+
+    return cms_csv_path
+
+
+def process_cms_data(csv_path):
+    """Process CMS ABA data into visualization-ready JSON."""
+    print("   Processing CMS ABA data...")
+    df = pd.read_csv(csv_path, dtype=str, low_memory=False)
+
+    if len(df) == 0:
+        print("   No CMS ABA data found")
+        return None
+
+    # Convert numeric columns
+    for col in ["Tot_Benes", "Tot_Srvcs", "Tot_Bene_Day_Srvcs"]:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).astype(int)
+    for col in ["Avg_Sbmtd_Chrg", "Avg_Mdcr_Alowd_Amt", "Avg_Mdcr_Pymt_Amt", "Avg_Mdcr_Stdzd_Amt"]:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
+
+    # Load LEIE for cross-referencing fraud labels
+    leie_npis = set()
+    leie_path = "data/real/leie_updated.csv"
+    if os.path.exists(leie_path):
+        leie = pd.read_csv(leie_path, dtype=str, low_memory=False)
+        leie_npis = set(leie["NPI"].dropna().str.strip())
+        print(f"   Loaded {len(leie_npis)} LEIE NPIs for cross-reference")
+
+    df["is_excluded"] = df["Rndrng_NPI"].isin(leie_npis)
+
+    # --- Aggregations ---
+
+    # By HCPCS code
+    by_code = df.groupby("HCPCS_Cd").agg(
+        providers=("Rndrng_NPI", "nunique"),
+        total_services=("Tot_Srvcs", "sum"),
+        total_beneficiaries=("Tot_Benes", "sum"),
+        avg_submitted_charge=("Avg_Sbmtd_Chrg", "mean"),
+        avg_medicare_payment=("Avg_Mdcr_Pymt_Amt", "mean"),
+    ).reset_index()
+    by_code.columns = ["hcpcs_code", "providers", "total_services", "total_beneficiaries", "avg_submitted_charge", "avg_medicare_payment"]
+
+    # By state
+    by_state = df.groupby("Rndrng_Prvdr_State_Abrvtn").agg(
+        providers=("Rndrng_NPI", "nunique"),
+        total_services=("Tot_Srvcs", "sum"),
+    ).reset_index().sort_values("providers", ascending=False).head(25)
+    by_state.columns = ["state", "providers", "total_services"]
+
+    # By year
+    by_year = []
+    if "Data_Year" in df.columns:
+        by_year = df.groupby("Data_Year").agg(
+            providers=("Rndrng_NPI", "nunique"),
+            total_services=("Tot_Srvcs", "sum"),
+        ).reset_index()
+        by_year.columns = ["year", "providers", "total_services"]
+        by_year = by_year.to_dict("records")
+
+    # By provider type
+    by_type = df.groupby("Rndrng_Prvdr_Type").agg(
+        count=("Rndrng_NPI", "nunique"),
+    ).reset_index().sort_values("count", ascending=False).head(15)
+    by_type.columns = ["provider_type", "count"]
+
+    # Provider-level summary
+    provider_agg = df.groupby("Rndrng_NPI").agg(
+        name=("Rndrng_Prvdr_Last_Org_Name", "first"),
+        first_name=("Rndrng_Prvdr_First_Name", "first"),
+        credential=("Rndrng_Prvdr_Crdntls", "first"),
+        state=("Rndrng_Prvdr_State_Abrvtn", "first"),
+        city=("Rndrng_Prvdr_City", "first"),
+        provider_type=("Rndrng_Prvdr_Type", "first"),
+        entity_type=("Rndrng_Prvdr_Ent_Cd", "first"),
+        total_services=("Tot_Srvcs", "sum"),
+        total_beneficiaries=("Tot_Benes", "sum"),
+        avg_submitted=("Avg_Sbmtd_Chrg", "mean"),
+        avg_payment=("Avg_Mdcr_Pymt_Amt", "mean"),
+        num_codes=("HCPCS_Cd", "nunique"),
+        codes_used=("HCPCS_Cd", lambda x: ",".join(sorted(x.unique()))),
+        is_excluded=("is_excluded", "any"),
+    ).reset_index()
+
+    provider_list = []
+    for _, row in provider_agg.sort_values("total_services", ascending=False).head(100).iterrows():
+        name = f"{row['first_name']} {row['name']}".strip() if row["entity_type"] == "I" else str(row["name"])
+        provider_list.append({
+            "provider_id": str(row["Rndrng_NPI"]),
+            "provider_name": name,
+            "state": str(row["state"]),
+            "credential": str(row["credential"]),
+            "entity_type": "Individual" if row["entity_type"] == "I" else "Organization",
+            "provider_type": str(row["provider_type"]),
+            "total_services": int(row["total_services"]),
+            "total_beneficiaries": int(row["total_beneficiaries"]),
+            "avg_submitted_charge": round(float(row["avg_submitted"]), 2),
+            "avg_medicare_payment": round(float(row["avg_payment"]), 2),
+            "codes_used": str(row["codes_used"]),
+            "num_codes": int(row["num_codes"]),
+            "is_excluded": bool(row["is_excluded"]),
+            "risk_level": "Critical" if row["is_excluded"] else "Low",
+        })
+
+    n_excluded = provider_agg["is_excluded"].sum()
+    n_total = len(provider_agg)
+
+    cms_dataset = {
+        "metadata": {
+            "dataset": "CMS Medicare Physician & Other Practitioners (ABA Codes)",
+            "source": "Centers for Medicare & Medicaid Services",
+            "url": "https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider-and-service",
+            "status": "loaded",
+            "total_aba_records": len(df),
+            "unique_providers": n_total,
+            "excluded_providers": int(n_excluded),
+            "years_covered": sorted(df["Data_Year"].unique().tolist()) if "Data_Year" in df.columns else ["2023"],
+            "notes": "ABA therapy is primarily Medicaid-funded (children/autism). This Medicare data represents only the small subset of ABA services billed to Medicare Part B.",
+        },
+        "providers": provider_list,
+        "by_code": by_code.round(2).to_dict("records"),
+        "by_state": by_state.to_dict("records"),
+        "by_year": by_year,
+        "by_provider_type": by_type.to_dict("records"),
+    }
+
+    return cms_dataset
+
+
 def generate_cms_placeholder():
     """Generate a placeholder for CMS Medicare data with instructions."""
     return {
@@ -280,12 +460,25 @@ if __name__ == "__main__":
         print(f"   Saved LEIE dataset: {leie_data['metadata']['aba_related']} ABA-related exclusions")
         print(f"   Total records: {leie_data['metadata']['total_records']}")
 
-    # 2. CMS Medicare data placeholder
+    # 2. CMS Medicare data - download and process
     print("\n2. CMS Medicare Provider Data...")
-    cms_data = generate_cms_placeholder()
-    with open(f"{OUTPUT_DIR}/cms_dataset.json", "w") as f:
-        json.dump(cms_data, f)
-    print(f"   Generated CMS placeholder with download instructions")
+    cms_csv = download_cms_aba_data()
+    if cms_csv and os.path.exists(cms_csv):
+        cms_data = process_cms_data(cms_csv)
+        if cms_data:
+            with open(f"{OUTPUT_DIR}/cms_dataset.json", "w") as f:
+                json.dump(cms_data, f, default=str)
+            print(f"   Saved CMS dataset: {cms_data['metadata']['total_aba_records']} ABA records, {cms_data['metadata']['unique_providers']} providers")
+        else:
+            cms_data = generate_cms_placeholder()
+            with open(f"{OUTPUT_DIR}/cms_dataset.json", "w") as f:
+                json.dump(cms_data, f)
+            print("   No ABA data found, saved placeholder")
+    else:
+        cms_data = generate_cms_placeholder()
+        with open(f"{OUTPUT_DIR}/cms_dataset.json", "w") as f:
+            json.dump(cms_data, f)
+        print("   Download failed, saved placeholder")
 
     # 3. Dataset index
     datasets_index = {
@@ -311,14 +504,13 @@ if __name__ == "__main__":
             },
             {
                 "id": "cms",
-                "name": "CMS Medicare Provider Data",
-                "description": "Medicare claims data by NPI and HCPCS code. Filter by 97151-97158 for ABA therapy.",
+                "name": "CMS Medicare Provider Data (ABA)",
+                "description": "Real Medicare claims for ABA therapy codes 97151-97158 across 2019-2023. Cross-referenced with LEIE exclusions.",
                 "source": "Centers for Medicare & Medicaid Services",
                 "url": "https://data.cms.gov/provider-summary-by-type-of-service/medicare-physician-other-practitioners/medicare-physician-other-practitioners-by-provider-and-service",
                 "reliability": "10/10",
-                "has_data": False,
+                "has_data": True,
                 "files": ["cms_dataset.json"],
-                "download_required": True,
             },
             {
                 "id": "tmsis",
